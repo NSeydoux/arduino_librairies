@@ -1,8 +1,27 @@
 #include "rider_manager.h"
 
+using namespace std;
+
+
 RiderManager::RiderManager(int chipSelect)
 {
+	_isReady = false;
+	_numberOfRiders = 0;
 	this->_chipSelect = chipSelect;
+	for(int i=0; i<MAX_RIDER; i++)
+	{
+		this->_numberOfRecords[i] = 0;
+	}
+}
+
+int RiderManager::folderNameToId(String folderName)
+{
+	return atoi(folderName.c_str());
+}
+
+String RiderManager::riderIdToName(int id)
+{
+	return String(id);
 }
 
 bool RiderManager::init()
@@ -33,38 +52,39 @@ int RiderManager::countDirectories()
 {
 	int dirCount = 0;
 	File root = SD.open("/");
-  
-  File f = root.openNextFile();
-  while(f)
-  {
-    if(f.isDirectory() && f.name().length() == 2)
-    {
-       dirCount++;
-    }
-    f = root.openNextFile();
-  }
-  // On retire 1 au compteur à cause du répertoire Trash par défaut
-  return dirCount-1;
+	File f = root.openNextFile();
+	while(f)
+	{
+		if(f.isDirectory() && ((String)f.name()).length() == FOLDER_NAME_SIZE)
+		{
+			Serial.println(f.name());
+			dirCount++;
+		}
+		f = root.openNextFile();
+	}
+	return dirCount;
 }
 
 File RiderManager::findRiderFolder(int rider)
 {
-	File root = SD.open("/");
-	File f;
-	// +1 à cause du répertoire Trash en début de répertoire
-	int decount = rider+1;
-	while(decount > 0)
+	return SD.open(riderIdToName(rider).c_str());
+}
+
+int RiderManager::countRecords(int rider)
+{
+	int recordCount = 0;
+	File root = findRiderFolder(rider);
+	File f = root.openNextFile();
+	while(f)
 	{
-		File tmp = root.openNextFile();
-		Serial.println(tmp.name());
-		if(tmp)
-			f = tmp;
-		if(f.isDirectory())
+		if(((String)f.name()).length() == RECORD_NAME_SIZE)
 		{
-				decount--;
+			Serial.println(f.name());
+			recordCount++;
 		}
+		f = root.openNextFile();
 	}
-	return f;
+	return recordCount;
 }
 
 /*void RiderManager::addRider()
