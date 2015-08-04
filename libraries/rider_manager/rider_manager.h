@@ -8,7 +8,7 @@
 #ifndef RIDER_MNGR_H
 #define RIDER_MNGR_H
 
-#define MAX_RIDER 32
+#define MAX_RIDER 10
 #define FOLDER_NAME_SIZE 1
 #define RECORD_NAME_SIZE 1
 
@@ -24,13 +24,21 @@ class RiderManager
 		RiderManager(int chipSelect);
 		// Repère les dossiers déjà créés, vérifie la présence de la carte SD...
 		bool init();
+		bool init(String root);
+		bool init(int numberOfRiders);
 		//void addRider();
 		//void addRecordToRider(int rider);
 		bool isReady(){return this->_isReady;};
-		int countDirectories();
+		int countDirectories(File root);
 		// Compte le nombre d'éléments dans le dossier spécifié
 		int countRecords(int rider);
+		int getNumberOfRiders();
+		void setNumberOfRiders(int n);
+		File addRecord(int rider);
+		bool addRider();
 		File findRiderFolder(int rider);
+		String getRiderFolderName(int rider);
+
 	private:
 		int folderNameToId(String folderName);
 		String riderIdToName(int riderId);
