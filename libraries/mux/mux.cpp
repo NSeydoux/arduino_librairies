@@ -25,11 +25,13 @@ void Mux::init()
 	
 	if(this->_mode)
 	{
+		//Serial.println("Setting up output on common pin :  "+String(this->_comPin));
 		// Mode multiplexeur -> on écrit sur la pin commune
 		pinMode(this->_comPin, OUTPUT);
 	}
 	else
 	{
+		//Serial.println("Setting up input on common pin :  "+String(this->_comPin));
 		// Mode démultiplexeur -> on lit sur la pin commune
 		pinMode(this->_comPin, INPUT);
 	}
